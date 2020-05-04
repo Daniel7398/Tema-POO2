@@ -1,0 +1,352 @@
+#include<iostream>
+#include<cmath>
+
+ using namespace std;
+ 
+ class Monom
+ 
+ {
+    public:
+    
+    int grad;
+    int coef;
+    
+    public:
+    
+    Monom()
+    
+    {
+        grad=0;
+        coef=0;
+    }
+    Monom(int coeficientul, int gradul)
+    
+    {
+        coef=coeficientul;
+        grad=gradul;
+    }
+    
+    Monom (const Monom &x)
+    
+    {
+        grad=x.grad;
+        coef=x.coef;
+    }
+    
+    void SetGrad() 
+    {
+        int i;
+        cin>>i;
+        grad=i;
+    }
+    void SetCoef() 
+    {
+        int i;
+        cin>>i;
+        coef=i;
+    }
+    
+    int GetGrad() const
+    {
+        return grad;
+    }
+    
+    float GetCoef()
+    {
+        return coef;
+    }
+    
+    
+     Monom& operator=( Monom& m1);
+    
+    ~Monom()
+    
+    {
+        grad=-99999;
+        coef=0;
+    }
+    
+    friend ostream& operator<<(ostream& os, const Monom& m);
+    friend istream& operator>>(istream& os,  Monom& m);
+
+ };
+ 
+ istream& operator>>(istream& is,  Monom& m)
+ {
+     is>>m.grad>>m.coef;
+     return is;
+ }
+ 
+ ostream& operator<<(ostream& os, const Monom& m)
+ {  
+     
+     if (m.coef>0)
+     
+     {
+        os<<"+"<<m.coef<<"*x^"<<m.grad;
+        return os;
+     }
+     
+     else if(m.coef<0)
+     
+     {
+        os<<m.coef<<"*x^"<<m.grad;
+        return os;
+     }
+     
+     else
+     {
+        os<<0;
+        return os;
+     }
+     
+ }
+ 
+Monom& Monom::operator=( Monom& m1)
+{
+    return m1;
+}
+
+
+ 
+ class Polinom
+ 
+ {
+     public:
+     
+     int nr_monoame;
+     Monom m[100];
+     
+     public:
+     
+     
+     Polinom(int numarul_monoamelor)
+                            
+                    
+     
+     {
+        nr_monoame = numarul_monoamelor;
+        int i;
+        for (i=0; i < nr_monoame; i++)
+        
+            {
+                int a;
+                int b;
+                cin>>a;
+                cin>>b;
+                m[i].coef=a;
+                m[i].grad=b;
+            }
+     }
+     
+     Polinom(Polinom& x)
+     
+     {
+        nr_monoame=x.nr_monoame;
+        int i;
+        for (i = 0; i < nr_monoame;i++)
+            m[i]=x.m[i];
+            
+     }
+     
+     ~Polinom()
+     
+     {
+        nr_monoame=0;
+     }
+     
+     friend ostream& operator<<(ostream& os, const Polinom& p);
+    friend istream& operator>>(istream& os,  Polinom& p);
+
+    void afisare(){
+        int i;
+        cout<<" Polinomul este: ";
+        for(i = 0; i< nr_monoame;i++)
+        {   
+            
+            Monom m1(m[i].coef, m[i].grad);
+            cout<<m1;
+            
+        }
+    }
+      Polinom& operator=( Polinom& p1);
+ };
+ istream& operator>>(istream& is,  Polinom& p)
+ {
+     is>>p.nr_monoame;
+     for ( int i; i<p.nr_monoame;i++)
+     {
+         is>>p.m[i].coef>>p.m[i].grad;
+     }
+     return is;
+ }
+ 
+ ostream& operator<<(ostream& os, const Polinom& p)
+ {  
+    os<<"Numarul monoamelor este: "<<p.nr_monoame<<" Polinomul este: ";
+    for(int i;i<p.nr_monoame;i++)
+    {   if(p.m[i].coef>0)
+        os<< "+"<<p.m[i].coef<<"*x^"<<p.m[i].grad;
+        else if (p.m[i].coef<0)
+        os<< p.m[i].coef<<"*x^"<<p.m[i].grad;
+    }
+    
+    return os;
+     
+ }
+ 
+ Polinom& Polinom::operator=( Polinom& p1)
+{
+    
+    return p1;
+}
+
+class Polinom_ireductibil: public Polinom
+
+{
+   public:
+   Polinom_ireductibil(int numarul_monoamelor):
+                        Polinom(numarul_monoamelor){}
+    Polinom_ireductibil(const Polinom_ireductibil& x);
+    ~Polinom_ireductibil();
+    int Eisenstein(Polinom p);
+    Polinom afisare_polinom_iredutibil()
+    {
+        afisare();
+    }
+    
+    Polinom afisare_polinom_reductibil1()
+    
+    {
+        afisare();
+    }
+    
+    Polinom afisare_polinom_reductibil2();
+    
+    friend ostream& operator<<(ostream& os, const Polinom& p);
+    friend istream& operator>>(istream& os,  Polinom& p);
+    Polinom_ireductibil& operator=( Polinom_ireductibil& p1);
+
+    
+   
+};
+Polinom_ireductibil& Polinom_ireductibil::operator=( Polinom_ireductibil& p1)
+{
+    
+    return p1;
+}
+int Eisenstein(Polinom p)
+{
+    int  mincoef, maxgrad,maxgradcoef,mingrad,mingradcoef;
+    int prim=-1,i=0;
+    while (p.m[i].coef == 0 && i < p.nr_monoame)
+        i++;
+        if ( i> p.nr_monoame)
+        return 0;
+        
+    mincoef=p.m[i].coef;
+    maxgrad=p.m[i].grad;
+    mingrad=p.m[i].grad;
+    maxgradcoef=p.m[i].coef;
+    mingradcoef-p.m[i].coef;
+    
+    
+    for(int j=i;j<p.nr_monoame && p.m[j].coef != 0;j++)
+    {
+        if (abs(p.m[j].coef) < mincoef)
+        mincoef = abs(p.m[i].coef);
+        if(p.m[i].grad>maxgrad)
+        {maxgrad=p.m[i].grad;
+        maxgradcoef=p.m[i].grad;
+        }
+        if(p.m[i].grad<mingrad)
+        {mingrad=p.m[i].grad;
+        mingradcoef=p.m[i].coef;
+        }
+        
+    }
+    
+    for(int k=2;k<=mincoef/2; k++)
+    
+    {   int a=0;
+        for(int l = i; l<p.nr_monoame && p.m[l].coef != 0; l++)
+        
+        {
+           if (p.m[l].coef % k != 0) 
+           a=1;
+        }
+    
+        if (a==0)
+        
+        {
+            int b=0;
+            if(maxgradcoef % k == 0)
+            b=1;
+            if(mingradcoef % (k*k) == 0)
+            b=1;
+            int g=0;
+            for(int y=0; y<k/2;y++)
+            
+            {
+                if (k % y == 0)
+                g++;
+            }
+            if (g != 0)
+            b=1;
+            if (b==0)
+            prim = k;
+            
+        }
+        
+        if (prim == -1) 
+        return 0;
+        else 
+        return 1;
+    }
+
+    
+    
+    
+}
+ istream& operator>>(istream& is,  Polinom_ireductibil& p)
+ {
+     is>>p.nr_monoame;
+     for ( int i; i<p.nr_monoame;i++)
+     {
+         is>>p.m[i].coef>>p.m[i].grad;
+     }
+     return is;
+ }
+ 
+ ostream& operator<<(ostream& os, const Polinom_ireductibil& p)
+ {  
+    os<<"Numarul monoamelor este: "<<p.nr_monoame<<" Polinomul este: ";
+    for(int i;i<p.nr_monoame;i++)
+    {   if(p.m[i].coef>0)
+        os<< "+"<<p.m[i].coef<<"*x^"<<p.m[i].grad;
+        else if (p.m[i].coef<0)
+        os<< p.m[i].coef<<"*x^"<<p.m[i].grad;
+    }
+    
+    return os;
+     
+ }
+Polinom_ireductibil::Polinom afisare_polinom_reductibil2()
+{
+    
+}
+ 
+
+Polinom_ireductibil::Polinom_ireductibil(const Polinom_ireductibil &x):
+                    Polinom(x.nr_monoame){}
+ 
+Polinom_ireductibil::~Polinom_ireductibil(){}
+
+
+ 
+
+ 
+ int main()
+ { 
+ 
+ }
